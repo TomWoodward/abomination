@@ -82,7 +82,7 @@ concatenates a list of strings into one string.
 
 input:
 - `array`: an array of stuff to map
-- `map`: the function to map. inside this function the scope is the array item. parent scopes are still accessible.
+- `map`: the function to map. inside this function the scope is the array item.
 
 maps a list of things into a list of different things.
 
