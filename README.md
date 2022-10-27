@@ -67,7 +67,8 @@ execute(fn, input));
 input:
 - `name`: the name of the value to retrieve
 
-retrieves a value from scope. can retrieve nested values using dot notation.
+retrieves a value from scope. can retrieve nested values using dot notation. the name `.` matches the entire current scope.
+parent scopes can be accessed, if a value name isn't found in the current scope it'll look higher up.
 
 ### concat
 
@@ -93,4 +94,5 @@ input:
 - `body`: the variable value or function definition
 
 defines a variable or function. returns null. functions have a `with` reserved key to put definitions in. values defined
-in a `with` affect all sub-scopes, values and function definitions can be overwritten by sub-scopes.
+in a `with` affect all sub-scopes, values and function definitions can be overwritten by sub-scopes. function definitions
+have access to a `param` function which retrieves a parameter from the function usage.
