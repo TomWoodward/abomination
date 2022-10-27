@@ -1,5 +1,5 @@
-import { FnImpl } from "..";
-import { execute } from "../lib/execute";
+import { FnImpl } from '..';
+import { execute } from '../lib/execute';
 
 export const concat: FnImpl = (params, scope, fns) => {
   if (!params.parts) throw new Error('parts is required for concat');
@@ -10,11 +10,11 @@ export const concat: FnImpl = (params, scope, fns) => {
   });
 
   const delimiter = params.delimiter ? execute(params.delimiter, scope, fns).value : '';
-  if (typeof delimiter !== 'string') throw new Error('concat delimiter must be a string')
+  if (typeof delimiter !== 'string') throw new Error('concat delimiter must be a string');
 
   return {
     value: parts.join(delimiter),
     scope,
     fns,
-  }
+  };
 };

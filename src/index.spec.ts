@@ -1,4 +1,4 @@
-import { execute, FnImpl } from ".";
+import { execute, FnImpl } from '.';
 
 describe('the abomination', () => {
 
@@ -7,15 +7,15 @@ describe('the abomination', () => {
       fn: 'concat',
       parts: ['hello', 'world'],
       delimiter: ' '
-    }
-    expect(execute(fn)).toBe('hello world')
+    };
+    expect(execute(fn)).toBe('hello world');
   });
 
   it('returns an object literal', () => {
     const fn = {
       random: 'key',
       with: 'otherKey',
-    }
+    };
     expect(execute(fn)).toEqual({
       random: 'key',
       with: 'otherKey',
@@ -31,11 +31,11 @@ describe('the abomination', () => {
       fn: 'concat',
       parts: ['hello', {fn: 'value', name: 'var'}],
       delimiter: ' '
-    }
+    };
     const input = {
       var: 'world'
-    }
-    expect(execute(fn, input)).toBe('hello world')
+    };
+    expect(execute(fn, input)).toBe('hello world');
   });
 
   it('resolves nested input', () => {
@@ -43,11 +43,11 @@ describe('the abomination', () => {
       fn: 'concat',
       parts: ['hello', {fn: 'value', name: 'thing.stuff'}],
       delimiter: ' '
-    }
+    };
     const input = {
       thing: {stuff: 'world'}
-    }
-    expect(execute(fn, input)).toBe('hello world')
+    };
+    expect(execute(fn, input)).toBe('hello world');
   });
 
   it('has user defined functions', () => {
@@ -63,11 +63,11 @@ describe('the abomination', () => {
         array: {fn: 'value', name: '.'},
         map: {fn: 'value', name: 'id'}
       }
-    }
+    };
     const input = [{id:'first thing'}, {id: 'second thing'}];
 
     expect(execute(fn, input)).toBe('first thing,second thing');
-  })
+  });
 
   it('has custom functions', () => {
     const fart: FnImpl = (_params, scope, fns) => ({value: 'farts', scope, fns});
@@ -91,9 +91,9 @@ describe('the abomination', () => {
         array: {fn: 'value', name: '.'},
         map: {fn: 'concat', parts: [{fn: 'value', name: 'id'}, {fn: 'value', name: 'composed-thing'}], delimiter: ' '}
       }
-    }
-    const input = [{id:'first thing'}, {id: 'second thing'}]
+    };
+    const input = [{id:'first thing'}, {id: 'second thing'}];
 
     expect(execute(fn, input, {fart})).toBe('first thing farts,second thing farts');
-  })
+  });
 });
