@@ -3,18 +3,20 @@ import { execute, FnImpl } from ".";
 describe('the abomination', () => {
 
   it('executes a function from a json compatible object config', () => {
-    expect(execute({
+    const fn = {
       fn: 'concat',
       parts: ['hello', 'world'],
       delimiter: ' '
-    })).toBe('hello world')
+    }
+    expect(execute(fn)).toBe('hello world')
   });
 
   it('returns an object literal', () => {
-    expect(execute({
+    const fn = {
       random: 'key',
       with: 'otherKey',
-    })).toEqual({
+    }
+    expect(execute(fn)).toEqual({
       random: 'key',
       with: 'otherKey',
     });
@@ -25,58 +27,73 @@ describe('the abomination', () => {
   });
 
   it('takes input', () => {
-    expect(execute({
+    const fn = {
       fn: 'concat',
       parts: ['hello', {fn: 'value', name: 'var'}],
       delimiter: ' '
-    }, {var: 'world'})).toBe('hello world')
+    }
+    const input = {
+      var: 'world'
+    }
+    expect(execute(fn, input)).toBe('hello world')
+  });
+
+  it('resolves nested input', () => {
+    const fn = {
+      fn: 'concat',
+      parts: ['hello', {fn: 'value', name: 'thing.stuff'}],
+      delimiter: ' '
+    }
+    const input = {
+      thing: {stuff: 'world'}
+    }
+    expect(execute(fn, input)).toBe('hello world')
   });
 
   it('has user defined functions', () => {
-    expect(execute(
-      {
-        with: {
-          fn: 'define',
-          function: 'join-with-comma',
-          body: {fn: 'concat', delimiter: ',', parts: {fn: 'param', name: 'parts'}}
-        },
-        fn: 'join-with-comma',
-        parts: {
-          fn: 'map',
-          array: {fn: 'value', name: '.'},
-          map: {fn: 'value', name: 'id'}
-        }
+    const fn = {
+      with: {
+        fn: 'define',
+        function: 'join-with-comma',
+        body: {fn: 'concat', delimiter: ',', parts: {fn: 'param', name: 'parts'}}
       },
-      [{id:'first thing'}, {id: 'second thing'}]
-    )).toBe('first thing,second thing');
+      fn: 'join-with-comma',
+      parts: {
+        fn: 'map',
+        array: {fn: 'value', name: '.'},
+        map: {fn: 'value', name: 'id'}
+      }
+    }
+    const input = [{id:'first thing'}, {id: 'second thing'}];
+
+    expect(execute(fn, input)).toBe('first thing,second thing');
   })
 
   it('has custom functions', () => {
     const fart: FnImpl = (_params, scope, fns) => ({value: 'farts', scope, fns});
 
-    expect(execute(
-      {
-        with: [
-          {
-            fn: 'define',
-            function: 'join-with-comma',
-            body: {fn: 'concat', delimiter: ',', parts: {fn: 'param', name: 'parts'}}
-          },
-          {
-            fn: 'define',
-            variable: 'composed-thing',
-            body: {fn: 'fart'}
-          }
-        ],
-        fn: 'join-with-comma',
-        parts: {
-          fn: 'map',
-          array: {fn: 'value', name: '.'},
-          map: {fn: 'concat', parts: [{fn: 'value', name: 'id'}, {fn: 'value', name: 'composed-thing'}], delimiter: ' '}
+    const fn = {
+      with: [
+        {
+          fn: 'define',
+          function: 'join-with-comma',
+          body: {fn: 'concat', delimiter: ',', parts: {fn: 'param', name: 'parts'}}
+        },
+        {
+          fn: 'define',
+          variable: 'composed-thing',
+          body: {fn: 'fart'}
         }
-      },
-      [{id:'first thing'}, {id: 'second thing'}],
-      {fart}
-    )).toBe('first thing farts,second thing farts');
+      ],
+      fn: 'join-with-comma',
+      parts: {
+        fn: 'map',
+        array: {fn: 'value', name: '.'},
+        map: {fn: 'concat', parts: [{fn: 'value', name: 'id'}, {fn: 'value', name: 'composed-thing'}], delimiter: ' '}
+      }
+    }
+    const input = [{id:'first thing'}, {id: 'second thing'}]
+
+    expect(execute(fn, input, {fart})).toBe('first thing farts,second thing farts');
   })
 });
