@@ -1,23 +1,28 @@
 # An Abomination
 
-a language for manipulating data written in json
+a language written in JSON for manipulating data.
 
 ## design goals
 
 ### function definitions must be JSON compatible
 
-function definitions are passed as javascript objects, but all data types used in the configs
-are JSON compatible. the expectation is that the javascript object could have come from `JSON.parse`.
+function definitions are passed as javascript objects, but all data types used in the definitions
+are JSON compatible. the expectation is that the definition could have come from `JSON.parse`.
 
 ### all function inputs can be more functions
 
 its functions all the way down bud.
 
-### JSON compatible primitives are recognized as literals
+### JSON compatible data is recognized as literal
 
 except for objects, which are literals if they don't have a `fn` key in them. if they have a `fn` key
 they're function definitions and will be executed.
 
+### function execution is safe
+
+A function definition loaded from an external source can be executed with a reasonable
+expectation of safety. Execution cannot access environment, pollute prototypes, or make network requests
+unless explicitly allowed.
 
 ## examples
 
